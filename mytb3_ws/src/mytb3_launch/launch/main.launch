@@ -1,0 +1,16 @@
+<launch>
+  <!-- Launch rosserial_node for TCP communication -->
+  <node pkg="rosserial_python" type="serial_node.py" name="rosserial_tcp" args="tcp 11411" output="screen"/>
+
+  <!-- Launch the odom_bridge.py node from the mytb3_bridges package -->
+  <node pkg="mytb3_bridges" type="odom_bridge.py" name="odom_bridge" output="screen"/>
+
+  <!-- Launch robot_pose_ekf -->
+  <include file="$(find robot_pose_ekf)/robot_pose_ekf.launch"/>
+  
+  <!-- Launch the teleop node from mytb3_teleop -->
+  <node pkg="mytb3_teleop" type="mytb3_teleop.py" name="mytb3_teleop" output="screen"/>
+  <node pkg="mytb3_slam" type="path_plot.py" name="plot" output="screen"/>
+  <node pkg="mytb3_slam" type="aruco_detection.py" name="cv2" output="screen"/>
+  <node pkg="mytb3_nav" type="go_to_goal.py" name="goal_navigation" output="screen"/>
+</launch>

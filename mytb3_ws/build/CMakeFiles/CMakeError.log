@@ -1,0 +1,61 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/ahmar/docs/prj/mytb3/mytb3_ws/build/CMakeFiles/CMakeScratch/TryCompile-Vu5pOR
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_b97ca/fast && /usr/bin/make  -f CMakeFiles/cmTC_b97ca.dir/build.make CMakeFiles/cmTC_b97ca.dir/build
+make[1]: Entering directory '/home/ahmar/docs/prj/mytb3/mytb3_ws/build/CMakeFiles/CMakeScratch/TryCompile-Vu5pOR'
+Building C object CMakeFiles/cmTC_b97ca.dir/src.c.o
+/usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_b97ca.dir/src.c.o -c /home/ahmar/docs/prj/mytb3/mytb3_ws/build/CMakeFiles/CMakeScratch/TryCompile-Vu5pOR/src.c
+Linking C executable cmTC_b97ca
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b97ca.dir/link.txt --verbose=1
+/usr/bin/cc -rdynamic CMakeFiles/cmTC_b97ca.dir/src.c.o -o cmTC_b97ca 
+/usr/bin/ld: CMakeFiles/cmTC_b97ca.dir/src.c.o: in function `main':
+src.c:(.text+0x46): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x5e): undefined reference to `pthread_cancel'
+/usr/bin/ld: src.c:(.text+0x6f): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_b97ca.dir/build.make:99: cmTC_b97ca] Error 1
+make[1]: Leaving directory '/home/ahmar/docs/prj/mytb3/mytb3_ws/build/CMakeFiles/CMakeScratch/TryCompile-Vu5pOR'
+make: *** [Makefile:127: cmTC_b97ca/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/ahmar/docs/prj/mytb3/mytb3_ws/build/CMakeFiles/CMakeScratch/TryCompile-B4C6QQ
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_6296a/fast && /usr/bin/make  -f CMakeFiles/cmTC_6296a.dir/build.make CMakeFiles/cmTC_6296a.dir/build
+make[1]: Entering directory '/home/ahmar/docs/prj/mytb3/mytb3_ws/build/CMakeFiles/CMakeScratch/TryCompile-B4C6QQ'
+Building C object CMakeFiles/cmTC_6296a.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_6296a.dir/CheckFunctionExists.c.o -c /home/ahmar/docs/prj/mytb3/mytb3_ws/build/CMakeFiles/CMakeScratch/TryCompile-B4C6QQ/CheckFunctionExists.c
+Linking C executable cmTC_6296a
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6296a.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create -rdynamic CMakeFiles/cmTC_6296a.dir/CheckFunctionExists.c.o -o cmTC_6296a  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_6296a.dir/build.make:99: cmTC_6296a] Error 1
+make[1]: Leaving directory '/home/ahmar/docs/prj/mytb3/mytb3_ws/build/CMakeFiles/CMakeScratch/TryCompile-B4C6QQ'
+make: *** [Makefile:127: cmTC_6296a/fast] Error 2
+
+
+

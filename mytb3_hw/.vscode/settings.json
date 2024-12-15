@@ -1,0 +1,27 @@
+{
+    "files.associations": {
+        "atomic": "cpp",
+        "cstdint": "cpp",
+        "random": "cpp",
+        "*.tcc": "cpp",
+        "cmath": "cpp",
+        "imu.h": "c",
+        "prj.hpp": "c",
+        "twist.h": "c",
+        "wifihardware.hpp": "c",
+        "wifi.h": "c",
+        "arduino.h": "c",
+        "float32.h": "c",
+        "array": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "vector": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "turtle_bot.hpp": "c",
+        "motor.hpp": "c"
+    },
+    "idf.port": "/dev/ttyUSB0"
+}

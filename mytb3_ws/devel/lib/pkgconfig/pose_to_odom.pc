@@ -1,0 +1,8 @@
+prefix=/home/ahmar/docs/prj/mytb3/mytb3_ws/devel
+
+Name: pose_to_odom
+Description: Description of pose_to_odom
+Version: 0.0.0
+Cflags: -I/home/ahmar/docs/prj/mytb3/mytb3_ws/src/pose_to_odom/include
+Libs: -L${prefix}/lib -lpose_to_odom
+Requires: geometry_msgs nav_msgs roscpp rospy std_msgs
