@@ -12,10 +12,10 @@ ros::NodeHandle_<WiFiHardware> nh;
 ros::Publisher pub_raw_odom_data("/mytb3/raw_odom_data", &tb.raw_odom_data);
 
 
-IPAddress ros_server(192, 168, 200, 221);
+IPAddress ros_server(172, 20, 10, 7);
 const uint16_t esp_port = 11411; 
-const char* ssid = "Ahmed Youssef";
-const char* pass = "ydmo1537";
+const char* ssid = "Rico";
+const char* pass = "69rico69";
 
 
 void cmd_vel_cb(const geometry_msgs::Twist &cmd_vel_msg);

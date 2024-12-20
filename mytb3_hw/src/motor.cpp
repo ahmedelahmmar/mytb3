@@ -26,10 +26,14 @@ bool motor::update(uint32_t current_time_ms)
     {
         this->last_call_ms = current_time_ms;
 
+        noInterrupts();
+
         this->rpm = ((this->curr_enc_count * 60000) / (ENCODER_PPR * MOTOR_UPDATE_INTERVAL_MS));
-       
+
         this->last_enc_count = this->curr_enc_count;
         this->curr_enc_count = 0;
+        
+        interrupts();
 
         // analogWrite(this->ena_pin, 255);
         analogWrite(this->ena_pin, this->controller.compute(this->desired_rpm, this->rpm, current_time_ms));

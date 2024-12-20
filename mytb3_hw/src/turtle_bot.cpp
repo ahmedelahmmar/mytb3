@@ -45,19 +45,23 @@ bool turtle_bot::update_imu_odom(uint32_t current_time_ms)
 
 void turtle_bot::update_enc_odom(void)
 {
+    noInterrupts();
+
     double dx_left  = (double(this->left_wheel.curr_enc_count - this->left_wheel.last_enc_count) / ENCODER_PPR) * 2.0 * PI * WHEEL_RADIUS_METER;
     double dx_right = (double(this->right_wheel.curr_enc_count - this->right_wheel.last_enc_count) / ENCODER_PPR) * 2.0 * PI * WHEEL_RADIUS_METER;
+
+    interrupts();
+
     double dx_tb    = ((dx_right + dx_left) / 2.0);
-    
+    double dtheta   = ((dx_right - dx_left) / WHEEL_BASE);
+
     this->raw_odom_data.position.x += dx_tb * cos(raw_odom_data.position.z);
     this->raw_odom_data.position.y += dx_tb * sin(raw_odom_data.position.z);
 
-    double dtheta   = ((dx_right - dx_left) / WHEEL_BASE);
-
     this->raw_odom_data.position.z += dtheta;
 
-    if (this->raw_odom_data.position.z < PI) this->raw_odom_data.position.z += (2.0 * PI);
-    if (PI < this->raw_odom_data.position.z) this->raw_odom_data.position.z -= (2.0 * PI);
+    if (this->raw_odom_data.position.z < -PI) this->raw_odom_data.position.z += (2.0 * PI);
+    else if (PI < this->raw_odom_data.position.z) this->raw_odom_data.position.z -= (2.0 * PI);
 }
 
 

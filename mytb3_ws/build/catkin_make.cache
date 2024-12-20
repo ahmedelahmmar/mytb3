@@ -1,2 +1,2 @@
-cv_basics:mytb3_bridges:mytb3_launch:mytb3_nav:mytb3_slam:mytb3_teleop:robot_pose_ekf
+mytb3_bridges:mytb3_launch:mytb3_nav:mytb3_slam:mytb3_teleop:robot_pose_ekf
 -DCATKIN_DEVEL_PREFIX=/home/ahmar/docs/prj/mytb3/mytb3_ws/devel -DCMAKE_INSTALL_PREFIX=/home/ahmar/docs/prj/mytb3/mytb3_ws/install -G Unix Makefiles

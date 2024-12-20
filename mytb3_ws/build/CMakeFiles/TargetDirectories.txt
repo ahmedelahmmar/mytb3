@@ -91,13 +91,6 @@
 /home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_teleop/CMakeFiles/install.dir
 /home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_teleop/CMakeFiles/install/local.dir
 /home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_teleop/CMakeFiles/install/strip.dir
-/home/ahmar/docs/prj/mytb3/mytb3_ws/build/cv_basics/CMakeFiles/test.dir
-/home/ahmar/docs/prj/mytb3/mytb3_ws/build/cv_basics/CMakeFiles/edit_cache.dir
-/home/ahmar/docs/prj/mytb3/mytb3_ws/build/cv_basics/CMakeFiles/rebuild_cache.dir
-/home/ahmar/docs/prj/mytb3/mytb3_ws/build/cv_basics/CMakeFiles/list_install_components.dir
-/home/ahmar/docs/prj/mytb3/mytb3_ws/build/cv_basics/CMakeFiles/install.dir
-/home/ahmar/docs/prj/mytb3/mytb3_ws/build/cv_basics/CMakeFiles/install/local.dir
-/home/ahmar/docs/prj/mytb3/mytb3_ws/build/cv_basics/CMakeFiles/install/strip.dir
 /home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_launch/CMakeFiles/_catkin_empty_exported_target.dir
 /home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_launch/CMakeFiles/actionlib_generate_messages_cpp.dir
 /home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_launch/CMakeFiles/actionlib_generate_messages_eus.dir

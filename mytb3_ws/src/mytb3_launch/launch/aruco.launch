@@ -1,0 +1,7 @@
+<launch>
+  <node pkg="mytb3_slam" type="aruco_visualizer.py" name="plot" output="screen"/>
+  <node pkg="mytb3_nav" type="go_to_goal.py" name="goal_navigation" output="screen"/>
+  <node pkg="mytb3_nav" type="fuzzy.py" name="obstacle_avoidance" output="screen"/>
+  
+  <node pkg="mytb3_slam" type="aruco_detection.py" name="cv2" output="screen"/>
+</launch>

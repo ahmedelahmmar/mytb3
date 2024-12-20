@@ -8,9 +8,9 @@ import tf.transformations
 # Global variables
 current_pose = PoseWithCovarianceStamped()  # Current pose of the robot
 goal = Pose()  # Current goal position
-linear_tolerance = 0.25  # Tolerance for reaching the goal (meters)
+linear_tolerance = 0.2  # Tolerance for reaching the goal (meters)
 kp_linear = 1.5 # Proportional gain for linear velocity
-kp_angular = 5.5 # Proportional gain for angular velocity
+kp_angular = 2.5 # Proportional gain for angular velocity
 velocity_publisher = None  # Publisher for robot velocity commands
 
 
@@ -51,7 +51,7 @@ def move_to_goal(goal_msg):
     angular_velocity = kp_angular * angle_diff
 
     # Cap velocities
-    linear_velocity = max(0.0, min(linear_velocity, 0.5))  # Cap linear velocity
+    linear_velocity = max(-0.25, min(linear_velocity, 0.25))  # Cap linear velocity
     angular_velocity = max(-3, min(angular_velocity, 3))  # Cap angular velocity
 
     # Publish the velocity commands

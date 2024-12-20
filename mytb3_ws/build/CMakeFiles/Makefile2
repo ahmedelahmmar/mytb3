@@ -67,7 +67,6 @@ all: gtest/all
 all: mytb3_bridges/all
 all: mytb3_nav/all
 all: mytb3_teleop/all
-all: cv_basics/all
 all: mytb3_launch/all
 all: mytb3_slam/all
 all: robot_pose_ekf/all
@@ -78,7 +77,6 @@ preinstall: gtest/preinstall
 preinstall: mytb3_bridges/preinstall
 preinstall: mytb3_nav/preinstall
 preinstall: mytb3_teleop/preinstall
-preinstall: cv_basics/preinstall
 preinstall: mytb3_launch/preinstall
 preinstall: mytb3_slam/preinstall
 preinstall: robot_pose_ekf/preinstall
@@ -94,26 +92,10 @@ clean: gtest/clean
 clean: mytb3_bridges/clean
 clean: mytb3_nav/clean
 clean: mytb3_teleop/clean
-clean: cv_basics/clean
 clean: mytb3_launch/clean
 clean: mytb3_slam/clean
 clean: robot_pose_ekf/clean
 .PHONY : clean
-
-#=============================================================================
-# Directory level rules for directory cv_basics
-
-# Recursive "all" directory target.
-cv_basics/all:
-.PHONY : cv_basics/all
-
-# Recursive "preinstall" directory target.
-cv_basics/preinstall:
-.PHONY : cv_basics/preinstall
-
-# Recursive "clean" directory target.
-cv_basics/clean:
-.PHONY : cv_basics/clean
 
 #=============================================================================
 # Directory level rules for directory gtest
