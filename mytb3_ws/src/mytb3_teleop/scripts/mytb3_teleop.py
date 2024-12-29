@@ -8,12 +8,12 @@ import tty
 
 # Increment values for linear and angular velocities
 LINEAR_INCREMENT = 0.1  # Increment for linear velocity (m/s)
-ANGULAR_INCREMENT = 0.93  # Increment for angular velocity (rad/s)
+ANGULAR_INCREMENT = 0.6  # Increment for angular velocity (rad/s)
 
 # Velocity limits
 LINEAR_MAX = 0.5  # Maximum linear velocity (m/s)
 LINEAR_MIN = -LINEAR_MAX # Minimum linear velocity (m/s)
-ANGULAR_MAX = 4.65  # Maximum angular velocity (rad/s)
+ANGULAR_MAX = 5.9  # Maximum angular velocity (rad/s)
 ANGULAR_MIN = -ANGULAR_MAX  # Minimum angular velocity (rad/s)
 
 # Define the key mappings

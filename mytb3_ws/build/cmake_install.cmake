@@ -140,6 +140,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_nav/cmake_install.cmake")
   include("/home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_teleop/cmake_install.cmake")
   include("/home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_launch/cmake_install.cmake")
+  include("/home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_misc/cmake_install.cmake")
   include("/home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_slam/cmake_install.cmake")
   include("/home/ahmar/docs/prj/mytb3/mytb3_ws/build/robot_pose_ekf/cmake_install.cmake")
 

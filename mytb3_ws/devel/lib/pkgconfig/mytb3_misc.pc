@@ -1,0 +1,8 @@
+prefix=/home/ahmar/docs/prj/mytb3/mytb3_ws/devel
+
+Name: mytb3_misc
+Description: Description of mytb3_misc
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

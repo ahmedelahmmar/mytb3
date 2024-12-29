@@ -61,3 +61,11 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/mytb3_nav" TYPE PROGRAM FILES "/home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_nav/catkin_generated/installspace/go_to_goal.py")
 endif()
 
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/mytb3_nav" TYPE PROGRAM FILES "/home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_nav/catkin_generated/installspace/fuzzy.py")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/mytb3_nav" TYPE PROGRAM FILES "/home/ahmar/docs/prj/mytb3/mytb3_ws/build/mytb3_nav/catkin_generated/installspace/mlp_predicted_nav.py")
+endif()
+

@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="mytb3_slam" type="aruco_visualizer.py" name="plot" output="screen"/>
+  <node pkg="mytb3_slam" type="aruco_detection.py" name="cv" output="screen"/>
+</launch>

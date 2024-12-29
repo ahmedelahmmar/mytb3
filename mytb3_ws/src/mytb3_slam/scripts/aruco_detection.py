@@ -19,7 +19,7 @@ aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
 aruco_params = cv2.aruco.DetectorParameters()
 
 # Start video capture (replace with your IP camera URL if needed)
-IP_Cam = "http://172.20.10.3:8080/video"
+IP_Cam = "http://192.168.19.254:8080/video"
 cap = cv2.VideoCapture(IP_Cam)
 
 # cap.set(cv2.CAP_PROP_FPS, 30)
@@ -41,7 +41,7 @@ initial_goal_x = float(input("Enter initial goal x-coordinate: "))
 initial_goal_y = float(input("Enter initial goal y-coordinate: "))
 
 # Configurable IDs for goal markers
-GOAL_IDS = [9]  # Modify this as needed
+GOAL_IDS = [25]  # Modify this as needed
 
 # Number of consecutive frames without ArUco markers before fallback
 FRAMES_WITHOUT_MARKERS_THRESHOLD = 20  # Modify this as needed
@@ -193,9 +193,9 @@ while not rospy.is_shutdown():
         # Only execute fallback logic after the threshold
         if frames_without_markers >= FRAMES_WITHOUT_MARKERS_THRESHOLD:
             distance_to_goal, angular_difference = calculate_distance_and_angle_to_goal()
-            if distance_to_goal is not None:
-                rospy.loginfo(f"No markers detected. Distance to initial goal: {distance_to_goal:.2f}m. "
-                              f"Angular difference: {math.degrees(angular_difference):.2f}°")
+            # if distance_to_goal is not None:
+            #     rospy.loginfo(f"No markers detected. Distance to initial goal: {distance_to_goal:.2f}m. "
+            #                   f"Angular difference: {math.degrees(angular_difference):.2f}°")
                 
             initial_goal_pose = Pose()
             initial_goal_pose.position.x = initial_goal_x
@@ -205,14 +205,14 @@ while not rospy.is_shutdown():
 
             if initial_goal_pose.position.z > 0.2:
                 goal_pub.publish(initial_goal_pose)
-            else:
-                cmd_vel_msg = Twist()
-                cmd_vel_msg.linear.x = 0
-                cmd_vel_msg.angular.z = 0
-                cmd_vel_pub.publish(cmd_vel_msg)
+            # else:
+            #     cmd_vel_msg = Twist()
+            #     cmd_vel_msg.linear.x = 0
+            #     cmd_vel_msg.angular.z = 0
+                # cmd_vel_pub.publish(cmd_vel_msg)
 
     # Display the frame
-    cv2.imshow("ArUco Detection", frame)
+    cv2.imshow("Visual Feedback", frame)
 
     # Break the loop with 'q'
     if cv2.waitKey(1) & 0xFF == ord('q'):
