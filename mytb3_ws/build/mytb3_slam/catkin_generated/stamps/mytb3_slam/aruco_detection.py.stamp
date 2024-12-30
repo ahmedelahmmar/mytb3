@@ -19,7 +19,7 @@ aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
 aruco_params = cv2.aruco.DetectorParameters()
 
 # Start video capture (replace with your IP camera URL if needed)
-IP_Cam = "http://192.168.19.254:8080/video"
+IP_Cam = "http://192.168.84.133:8080/video"
 cap = cv2.VideoCapture(IP_Cam)
 
 # cap.set(cv2.CAP_PROP_FPS, 30)
@@ -44,7 +44,7 @@ initial_goal_y = float(input("Enter initial goal y-coordinate: "))
 GOAL_IDS = [25]  # Modify this as needed
 
 # Number of consecutive frames without ArUco markers before fallback
-FRAMES_WITHOUT_MARKERS_THRESHOLD = 20  # Modify this as needed
+FRAMES_WITHOUT_MARKERS_THRESHOLD = 5  # Modify this as needed
 frames_without_markers = 0  # Counter for frames without ArUco markers
 
 

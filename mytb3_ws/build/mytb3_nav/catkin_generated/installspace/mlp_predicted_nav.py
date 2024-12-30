@@ -1,36 +1,14 @@
 #!/usr/bin/env python3
 
-import rospy
-import torch
-import torch.nn as nn
-import numpy as np
-from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Twist
-from tf.transformations import euler_from_quaternion
 import joblib
+import rospy
+import numpy as np
 
-cmd_vel_pub = rospy.Publisher('/mytb3/cmd_vel', Twist, queue_size=10)
-cmd_vel = Twist()
+from geometry_msgs.msg import Pose, PoseWithCovarianceStamped, Twist
 
-# Define the PyTorch MLP model as used during training
-class MLPModel(nn.Module):
-    def __init__(self, input_size, output_size):
-        super(MLPModel, self).__init__()
-        self.hidden1 = nn.Linear(input_size, 100)
-        self.hidden2 = nn.Linear(100, 50)
-        self.output = nn.Linear(50, output_size)
-
-    def forward(self, x):
-        x = torch.relu(self.hidden1(x))
-        x = torch.relu(self.hidden2(x))
-        x = self.output(x)
-        return x
-
-# Load the trained PyTorch model and scaler
-model = MLPModel(input_size=4, output_size=2)
-model.load_state_dict(torch.load('/home/ahmar/docs/prj/mytb3/mytb3_ws/src/mytb3_nav/models/mlp_model.pth', map_location=torch.device('cpu'), weights_only=True))
-model.eval()  # Set the model to evaluation mode
-
-scaler = joblib.load('/home/ahmar/docs/prj/mytb3/mytb3_ws/src/mytb3_nav/models/scaler.pkl')
+# Load the trained sklearn MLP model and scaler
+model = joblib.load('/home/ahmar/docs/prj/mytb3/mytb3_ws/src/mytb3_nav/models/mlp_model_sklearn.pkl')  # Load the sklearn model
+scaler = joblib.load('/home/ahmar/docs/prj/mytb3/mytb3_ws/src/mytb3_nav/models/scaler.pkl')  # Load the scaler
 
 # Initialize global variables to store pose and obstacle data
 robot_pose = None
@@ -46,18 +24,20 @@ def odom_callback(msg):
 def goal_callback(msg):
     global goal_pose
     goal_pose = msg  # msg is of type Pose
-    calculate_error_and_predict()
 
 # Callback for obstacle pose
 def obstacle_callback(msg):
     global obstacle_pose
     obstacle_pose = msg  # msg is of type Pose
-    calculate_error_and_predict()
 
 # Function to calculate the error and make predictions
 def calculate_error_and_predict():
     if robot_pose is None or goal_pose is None or obstacle_pose is None:
-        return  # Ensure that all required data is available
+        # Log a warning if the data is missing
+        rospy.logwarn("Missing data: robot_pose, goal_pose, or obstacle_pose are None. Publishing a default safe velocity.")
+
+        # Fallback logic: return a safe default linear velocity and neutral angular velocity
+        return 0.2, 0  # Safe default velocity (e.g., linear velocity of 0.2 m/s, angular velocity of 0)
 
     # Calculate the error between robot and goal position
     goal_error_x = goal_pose.position.x - robot_pose.position.x
@@ -65,38 +45,41 @@ def calculate_error_and_predict():
 
     # Extract obstacle information
     relative_obstacle_distance = obstacle_pose.position.z
-       
     relative_obstacle_orientation = obstacle_pose.orientation.z
 
     # Prepare the feature vector for the model
     features = np.array([[relative_obstacle_distance, relative_obstacle_orientation, goal_error_x, goal_error_y]])
-    
-    # Make the prediction using the trained model (PyTorch)
-    with torch.no_grad():
-        features_tensor = torch.tensor(features, dtype=torch.float32)
-        output = model(features_tensor).numpy()
-    
+
+    # Scale the features using the same scaler used during training
+    features_scaled = scaler.transform(features)
+
+    # Make the prediction using the trained model (sklearn)
+    output = model.predict(features_scaled)
+
     # Extract linear and angular velocities from model output
     linear_velocity = output[0][0]
     angular_velocity = output[0][1]
 
-    # Publish the velocities to cmd_vel
-    cmd_vel.linear.x = linear_velocity
-    cmd_vel.angular.z = angular_velocity
-    cmd_vel_pub.publish(cmd_vel)
+    return linear_velocity, angular_velocity
 
 def main():
     # Initialize ROS node
     rospy.init_node('ai_nav_node')
 
     # Initialize subscribers
-    goal_sub = rospy.Subscriber('/mytb3/slam/goal', Pose, goal_callback, queue_size=10)
-    obstacle_sub = rospy.Subscriber('/mytb3/slam/obstacle', Pose, obstacle_callback, queue_size=10)
-    odom_sub = rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, odom_callback, queue_size=10)
+    rospy.Subscriber('/mytb3/slam/goal', Pose, goal_callback, queue_size=10)
+    rospy.Subscriber('/mytb3/slam/obstacle', Pose, obstacle_callback, queue_size=10)
+    rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, odom_callback, queue_size=10)
+
+    cmd_vel_pub = rospy.Publisher('/mytb3/cmd_vel', Twist, queue_size=10)
+    cmd_vel = Twist()
 
     # Set the loop rate
-    rate = rospy.Rate(10)  # 10 Hz
+    rate = rospy.Rate(1)  # 1 Hz
     while not rospy.is_shutdown():
+        cmd_vel.linear.x, cmd_vel.angular.z = calculate_error_and_predict()
+        cmd_vel_pub.publish(cmd_vel)
+
         rate.sleep()
 
 if __name__ == '__main__':

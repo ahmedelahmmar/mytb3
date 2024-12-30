@@ -166,6 +166,9 @@ catkin_install_python(PROGRAMS
   scripts/go_to_goal.py
   scripts/fuzzy.py 
   scripts/mlp_predicted_nav.py 
+  scripts/gb_predicted_nav.py 
+  scripts/dtr_predicted_nav.py 
+  scripts/rf_predicted_nav.py 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
