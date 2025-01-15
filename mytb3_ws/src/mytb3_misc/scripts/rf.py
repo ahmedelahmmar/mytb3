@@ -16,16 +16,17 @@ data = pd.read_csv('/home/ahmar/docs/prj/mytb3/mytb3_ws/src/mytb3_misc/features.
 data.fillna(data.median(), inplace=True)
 
 # Step 3: Handle outliers using Z-score
-z_scores = np.abs(zscore(data[['Relative Obstacle Distance', 'Relative Obstacle Orientation', 'Goal Error X', 'Goal Error Y', 'Linear Velocity', 'Angular Velocity']]))
+z_scores = np.abs(zscore(data[['Relative Obstacle Distance', 'Relative Obstacle Orientation', 
+                               'Goal Error X', 'Goal Error Y', 'Linear Velocity', 'Angular Velocity']]))
 threshold = 3
-outliers = (z_scores > threshold).all(axis=1)
+outliers = (z_scores > threshold).any(axis=1)
 
-# Option: Remove outliers
+# Remove outliers
 data_clean = data[~outliers]
 
 # Step 4: Split the data into features and targets
 X = data_clean[['Relative Obstacle Distance', 'Relative Obstacle Orientation', 'Goal Error X', 'Goal Error Y']]
-y = data_clean[['Linear Velocity', 'Angular Velocity']]  # Target for both Linear and Angular Velocities
+y = data_clean[['Linear Velocity', 'Angular Velocity']]  # Targets for both Linear and Angular Velocities
 
 # Step 5: Normalize the features (standardization)
 scaler = StandardScaler()
@@ -55,18 +56,23 @@ print("Model and Scaler saved successfully.")
 # Step 10: Evaluate the model
 y_pred = model.predict(X_test)
 
+# Step 11: Inverse scale the predictions and actual target values
+y_pred_original = y_pred  # No inverse transform needed as the targets were not scaled
+y_test_original = y_test.to_numpy()
+
 # Calculate MSE
-mse = mean_squared_error(y_test, y_pred)
+mse = mean_squared_error(y_test_original, y_pred_original)
 print(f'Mean Squared Error: {mse}')
 
-# Optionally, print the predictions vs actual values
+# Print predictions vs actual values
 print("\nPredictions vs Actual Values:")
-print(pd.DataFrame({
-    "Predicted Linear Velocity": y_pred[:, 0],
-    "Actual Linear Velocity": y_test['Linear Velocity'].values,
-    "Predicted Angular Velocity": y_pred[:, 1],
-    "Actual Angular Velocity": y_test['Angular Velocity'].values
-}))
+comparison_df = pd.DataFrame({
+    "Predicted Linear Velocity": y_pred_original[:, 0],
+    "Actual Linear Velocity": y_test_original[:, 0],
+    "Predicted Angular Velocity": y_pred_original[:, 1],
+    "Actual Angular Velocity": y_test_original[:, 1]
+})
+print(comparison_df)
 
 # Visualize the feature distributions and outliers
 for column in ['Relative Obstacle Distance', 'Relative Obstacle Orientation', 'Goal Error X', 'Goal Error Y', 'Linear Velocity', 'Angular Velocity']:
@@ -78,3 +84,31 @@ for column in ['Relative Obstacle Distance', 'Relative Obstacle Orientation', 'G
     plt.boxplot(data[column], vert=False)
     plt.title(f'{column} Boxplot')
     plt.show()
+
+# Step 12: Plot predicted vs actual values
+plt.figure(figsize=(12, 6))
+
+# Linear Velocity
+plt.subplot(1, 2, 1)
+plt.scatter(y_test_original[:, 0], y_pred_original[:, 0], color='blue', alpha=0.6, label='Predictions')
+plt.plot([min(y_test_original[:, 0]), max(y_test_original[:, 0])], 
+         [min(y_test_original[:, 0]), max(y_test_original[:, 0])], 
+         color='red', linestyle='--', label='Perfect Fit')
+plt.title("Linear Velocity: Predicted vs Actual")
+plt.xlabel("Actual Linear Velocity")
+plt.ylabel("Predicted Linear Velocity")
+plt.legend()
+
+# Angular Velocity
+plt.subplot(1, 2, 2)
+plt.scatter(y_test_original[:, 1], y_pred_original[:, 1], color='green', alpha=0.6, label='Predictions')
+plt.plot([min(y_test_original[:, 1]), max(y_test_original[:, 1])], 
+         [min(y_test_original[:, 1]), max(y_test_original[:, 1])], 
+         color='red', linestyle='--', label='Perfect Fit')
+plt.title("Angular Velocity: Predicted vs Actual")
+plt.xlabel("Actual Angular Velocity")
+plt.ylabel("Predicted Angular Velocity")
+plt.legend()
+
+plt.tight_layout()
+plt.show()

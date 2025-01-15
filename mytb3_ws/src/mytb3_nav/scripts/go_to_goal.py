@@ -1,91 +1,118 @@
 #!/usr/bin/env python3
 
 import rospy
-from geometry_msgs.msg import Twist, Pose, Pose2D, PoseWithCovarianceStamped
+from geometry_msgs.msg import Twist, Pose, PoseWithCovarianceStamped
 import math
 import tf.transformations
 
-# Global variables
-current_pose = PoseWithCovarianceStamped()  # Current pose of the robot
-goal = Pose()  # Current goal position
-linear_tolerance = 0.2  # Tolerance for reaching the goal (meters)
-kp_linear = 1.5 # Proportional gain for linear velocity
-kp_angular = 2.5 # Proportional gain for angular velocity
-velocity_publisher = None  # Publisher for robot velocity commands
+class GoalNavigator:
+    def __init__(self):
+        rospy.init_node('go_to_goal', anonymous=True)
+        
+        # Control parameters
+        self.LINEAR_MAX_SPEED = 0.5
+        self.ANGULAR_MAX_SPEED = 5.9
+        self.LINEAR_MIN_SPEED = 0.15
+        self.linear_tolerance = 0.1
+        
+        # PID parameters
+        self.kp_linear = 1.5
+        self.kp_angular = 2.5
+        
+        # State variables
+        self.current_pose = None
+        self.current_goal = None
+        self.is_moving = False
+        
+        # Publishers and Subscribers
+        self.velocity_publisher = rospy.Publisher('/mytb3/cmd_vel', Twist, queue_size=10)
+        # rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, self.update_pose)
+        rospy.Subscriber('/mytb3/slam/goal', Pose, self.goal_callback)
 
+    # def update_pose(self, msg):
+    #     """Update robot's current pose"""
+    #     self.current_pose = msg.pose.pose
 
-def update_pose(msg):
-    """
-    Callback function to update the robot's current position and orientation.
-    """
-    global current_pose
-    current_pose.pose.pose = msg.pose.pose
+    def goal_callback(self, goal_msg):
+        """Handle new goal messages"""
+        self.current_goal = goal_msg
+        self.navigate()
 
+    def calculate_velocities(self, distance, angle):
+        """Calculate appropriate linear and angular velocities"""
+        # First handle the angular velocity to align with the goal
+        if abs(angle) > math.radians(5):  # If angle error is greater than 5 degrees
+            linear_vel = 0  # Stop and turn
+            angular_vel = self.kp_angular * angle
+        else:
+            # Once aligned, calculate velocities
+            linear_vel = self.kp_linear * distance
+            angular_vel = self.kp_angular * angle * 0.5  # Reduced angular correction while moving
 
-def move_to_goal(goal_msg):
-    """
-    Callback function to move the robot toward the received goal.
-    Triggered upon receiving a new goal message.
-    """
-    global current_pose
-    vel_msg = Twist()
+            # Apply minimum linear speed if moving and well-aligned
+            if distance > self.linear_tolerance:
+                linear_vel = max(linear_vel, self.LINEAR_MIN_SPEED)
 
-    # Calculate the distance to the goal
-    distance_to_goal = goal_msg.position.z
+        # Cap velocities
+        linear_vel = max(-self.LINEAR_MAX_SPEED, min(linear_vel, self.LINEAR_MAX_SPEED))
+        angular_vel = max(-self.ANGULAR_MAX_SPEED, min(angular_vel, self.ANGULAR_MAX_SPEED))
 
-    # rospy.loginfo(f"New goal received: x={goal_msg.x}, y={goal_msg.y}, theta={goal_msg.theta}")
-    
-    # If the robot is close enough to the goal, stop
-    if distance_to_goal <= linear_tolerance:
-        rospy.loginfo("Goal reached!")
-        vel_msg.linear.x = 0
-        vel_msg.angular.z = 0
-        velocity_publisher.publish(vel_msg)
-        return
+        return linear_vel, angular_vel
 
+    def navigate(self):
+        """Main navigation logic"""
+        if not self.current_goal:
+            return
 
-    angle_diff = goal_msg.orientation.z
+        # Get current goal parameters
+        distance = self.current_goal.position.z
+        angle = self.current_goal.orientation.z
 
-    # Calculate linear and angular velocities
-    linear_velocity = kp_linear * distance_to_goal
-    angular_velocity = kp_angular * angle_diff
+        # Check if goal reached
+        if distance <= self.linear_tolerance:
+            self.stop_robot()
+            rospy.loginfo("Goal reached!")
+            return
 
-    # Cap velocities
-    linear_velocity = max(-0.25, min(linear_velocity, 0.25))  # Cap linear velocity
-    angular_velocity = max(-3, min(angular_velocity, 3))  # Cap angular velocity
+        # Calculate velocities
+        linear_vel, angular_vel = self.calculate_velocities(distance, angle)
 
-    # Publish the velocity commands
-    vel_msg = Twist()
+        # Create and publish velocity command
+        vel_msg = Twist()
+        
+        # Prioritize turning when angle is large
+        if abs(angle) > math.radians(30):
+            vel_msg.linear.x = linear_vel * 0.5  # Reduce linear velocity while turning
+            vel_msg.angular.z = angular_vel
+        else:
+            vel_msg.linear.x = linear_vel
+            vel_msg.angular.z = angular_vel
 
-    vel_msg.linear.x = linear_velocity
-    vel_msg.angular.z = angular_velocity
+        self.velocity_publisher.publish(vel_msg)
+        
+        # Log navigation info
+        rospy.logdebug(f"Distance: {distance:.2f}m, Angle: {math.degrees(angle):.2f}°")
+        rospy.logdebug(f"Velocities - Linear: {linear_vel:.2f} m/s, Angular: {angular_vel:.2f} rad/s")
 
-    velocity_publisher.publish(vel_msg)
+    def stop_robot(self):
+        """Stop the robot smoothly"""
+        vel_msg = Twist()
+        self.velocity_publisher.publish(vel_msg)
+        self.is_moving = False
 
-
-
-def main():
-    """
-    Main function to initialize the node, publishers, and subscribers.
-    """
-    global velocity_publisher
-
-    # Initialize the ROS node
-    rospy.init_node('go_to_goal', anonymous=True)
-
-    # Publisher for robot velocity commands
-    velocity_publisher = rospy.Publisher('/mytb3/cmd_vel', Twist, queue_size=10)
-
-    # Subscribers
-    rospy.Subscriber('/robot_pose_ekf/odom_combined', PoseWithCovarianceStamped, update_pose)
-    rospy.Subscriber('/mytb3/slam/goal', Pose, move_to_goal)
-
-    rospy.loginfo("Move-to-goal node is ready and waiting for goals...")
-    rospy.spin()  # Keep the node running
-
+    def run(self):
+        """Main run loop"""
+        rate = rospy.Rate(10)  # 10 Hz
+        rospy.loginfo("Goal navigator is ready...")
+        
+        while not rospy.is_shutdown():
+            if self.current_goal and self.current_pose:
+                self.navigate()
+            rate.sleep()
 
 if __name__ == '__main__':
     try:
-        main()
+        navigator = GoalNavigator()
+        navigator.run()
     except rospy.ROSInterruptException:
         pass
