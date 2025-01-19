@@ -21,35 +21,35 @@ angular_velocity    = ctrl.Consequent(np.arange(-5.9, 6.0, 0.1), 'angular_veloci
 
 
 # Adjusted membership functions for distance
-distance['close']   = fuzz.trapmf(distance.universe, [0, 0, 50, 100])
-distance['medium']  = fuzz.trapmf(distance.universe, [50, 100, 150, 200])
-distance['far']     = fuzz.trapmf(distance.universe, [150, 200, 250, 250])
+distance['close']   = fuzz.trapmf(distance.universe, [0, 0, 25, 50])
+distance['medium']  = fuzz.trapmf(distance.universe, [25, 50, 75, 100])
+distance['far']     = fuzz.trapmf(distance.universe, [100, 125, 140, 140])
 
 
 # Adjusted membership functions for angle with expanded range and wider straight zone
-angle['far_right']    = fuzz.trapmf(angle.universe, [np.radians(-70), np.radians(-70), np.radians(-50), np.radians(-40)])
-angle['right']        = fuzz.trapmf(angle.universe, [np.radians(-50), np.radians(-40), np.radians(-30), np.radians(-20)])
-angle['slight_right'] = fuzz.trapmf(angle.universe, [np.radians(-30), np.radians(-20), np.radians(-15), np.radians(-10)])
-angle['straight']     = fuzz.trapmf(angle.universe, [np.radians(-15), np.radians(-10), np.radians(10), np.radians(15)])
-angle['slight_left']  = fuzz.trapmf(angle.universe, [np.radians(10), np.radians(15), np.radians(20), np.radians(30)])
-angle['left']         = fuzz.trapmf(angle.universe, [np.radians(20), np.radians(30), np.radians(40), np.radians(50)])
-angle['far_left']     = fuzz.trapmf(angle.universe, [np.radians(40), np.radians(50), np.radians(70), np.radians(70)])
+angle['far_right']    = fuzz.trapmf(angle.universe, [np.radians(-70), np.radians(-70), np.radians(-60), np.radians(-50)])
+angle['right']        = fuzz.trapmf(angle.universe, [np.radians(-50), np.radians(-40), np.radians(-25), np.radians(-15)])
+angle['slight_right'] = fuzz.trapmf(angle.universe, [np.radians(-20), np.radians(-15), np.radians(-10), np.radians(-5)])
+angle['straight']     = fuzz.trapmf(angle.universe, [np.radians(-10), np.radians(-5), np.radians(5), np.radians(10)])
+angle['slight_left']  = fuzz.trapmf(angle.universe, [np.radians(5), np.radians(10), np.radians(15), np.radians(20)])
+angle['left']         = fuzz.trapmf(angle.universe, [np.radians(15), np.radians(25), np.radians(40), np.radians(50)])
+angle['far_left']     = fuzz.trapmf(angle.universe, [np.radians(50), np.radians(60), np.radians(70), np.radians(70)])
 
 
 # Adjusted membership functions for linear velocity
-linear_velocity['slow']   = fuzz.trapmf(linear_velocity.universe, [0.15, 0.15, 0.20, 0.25])
-linear_velocity['medium'] = fuzz.trapmf(linear_velocity.universe, [0.20, 0.25, 0.35, 0.40])
-linear_velocity['fast']   = fuzz.trapmf(linear_velocity.universe, [0.35, 0.40, 0.50, 0.50])
+linear_velocity['slow']   = fuzz.trapmf(linear_velocity.universe, [0.15, 0.15, 0.175, 0.2])
+linear_velocity['medium'] = fuzz.trapmf(linear_velocity.universe, [0.175, 0.225, 0.275, 0.3])
+linear_velocity['fast']   = fuzz.trapmf(linear_velocity.universe, [0.275, 0.3, 0.4, 0.50])
 
 
 # Adjusted membership functions for angular velocity
-angular_velocity['sharp_left']   = fuzz.trapmf(angular_velocity.universe, [3.0, 4.0, 5.9, 5.9])
-angular_velocity['slight_left']  = fuzz.trapmf(angular_velocity.universe, [0.2, 0.5, 1.0, 2.0])
-angular_velocity['left']         = fuzz.trapmf(angular_velocity.universe, [1.0, 2.0, 3.0, 4.0])
-angular_velocity['straight']     = fuzz.trapmf(angular_velocity.universe, [-0.5, -0.2, 0.2, 0.5])
-angular_velocity['right']        = fuzz.trapmf(angular_velocity.universe, [-4.0, -3.0, -2.0, -1.0])
-angular_velocity['slight_right'] = fuzz.trapmf(angular_velocity.universe, [-2.0, -1.0, -0.5, -0.2])
 angular_velocity['sharp_right']  = fuzz.trapmf(angular_velocity.universe, [-5.9, -5.9, -4.0, -3.0])
+angular_velocity['right']        = fuzz.trapmf(angular_velocity.universe, [-4.0, -3.0, -2.0, -1.0])
+angular_velocity['slight_right'] = fuzz.trapmf(angular_velocity.universe, [-1.5, -1.0, -0.5, -0.2])
+angular_velocity['straight']     = fuzz.trapmf(angular_velocity.universe, [-0.2, -0.1, 0.1, 0.2])
+angular_velocity['slight_left']  = fuzz.trapmf(angular_velocity.universe, [0.2, 0.5, 1.0, 1.5])
+angular_velocity['left']         = fuzz.trapmf(angular_velocity.universe, [1.0, 2.0, 3.0, 4.0])
+angular_velocity['sharp_left']   = fuzz.trapmf(angular_velocity.universe, [3.0, 4.0, 5.9, 5.9])
 
 
 # Define fuzzy rules with left turn preference
@@ -151,7 +151,7 @@ def update_obstacle_pose(msg):
     obstacle_distance = msg.position.z * 100  # Convert to cm
     obstacle_angle = msg.orientation.z       # Angle from pose
 
-    rospy.loginfo(f"Received Distance: {obstacle_distance:.2f} cm, Angle: {obstacle_angle:.2f}°")
+    rospy.loginfo(f"[fuzzy] Obstacle Detected! Dist: {obstacle_distance / 100:.2f}m, Theta: {np.degrees(obstacle_angle):.2f}°")
     obstacle_avoidance_logic(obstacle_distance, obstacle_angle)
 
 def main():
