@@ -63,12 +63,12 @@ def save_to_csv(file_path, data, headers):
 
 # Main function
 def main():
-    bag_dir = "/home/ahmar/docs/prj/mytb3/mytb3_ws/src/bags"
-    output_csv = "/home/ahmar/docs/prj/mytb3/mytb3_ws/src/mytb3_misc/features.csv"
+    bag_dir = "/home/ahmar/docs/prj/mytb3/mytb3_ws/src/bags/yolo_bags"
+    output_csv = "/home/ahmar/docs/prj/mytb3/mytb3_ws/src/mytb3_misc/yolo_bags_features.csv"
 
     combined_data = []
 
-    for case_num in range(1, 11):
+    for case_num in range(1, 31):
         bag_path = f"{bag_dir}/case_{case_num}.bag"
         if not os.path.exists(bag_path):
             print(f"Bag file {bag_path} does not exist. Skipping...")

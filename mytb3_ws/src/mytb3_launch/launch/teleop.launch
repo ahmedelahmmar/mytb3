@@ -1,5 +1,4 @@
 <launch>
   <!-- Launch the teleop node from mytb3_teleop -->
   <node pkg="mytb3_teleop" type="mytb3_teleop.py" name="mytb3_teleop" output="screen"/>
-  <node pkg="mytb3_slam" type="cost_map_plot.py" name="plot" output="screen"/>
 </launch>

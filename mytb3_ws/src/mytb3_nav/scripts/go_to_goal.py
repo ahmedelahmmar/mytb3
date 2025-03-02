@@ -10,7 +10,7 @@ current_pose = PoseWithCovarianceStamped()  # Current pose of the robot
 goal = Pose()                               # Current goal position
 
 LINEAR_TOLERANCE = 0.25      # Tolerance for reaching the goal (meters)
-kp_linear = 1             # Proportional gain for linear velocity
+kp_linear = 1               # Proportional gain for linear velocity
 kp_angular = 2.5            # Proportional gain for angular velocity
 velocity_publisher = None   # Publisher for robot velocity commands
 
@@ -51,12 +51,12 @@ def move_to_goal(goal_msg):
     linear_velocity = kp_linear * distance_to_goal
     angular_velocity = kp_angular * angle_diff
 
-    # if abs(angle_diff) > math.radians(10):
-    #     linear_velocity = 0
+    # if abs(angle_diff) > math.radians(15):
+    #     linear_velocity = 0.15
 
     # Cap velocities
-    linear_velocity = max(-0.4, min(linear_velocity, 0.4))  # Cap linear velocity
-    angular_velocity = max(-1.5, min(angular_velocity, 1.5))  # Cap angular velocity
+    linear_velocity = max(-0.5, min(linear_velocity, 0.5))  # Cap linear velocity
+    angular_velocity = max(-2.5, min(angular_velocity, 2.5))  # Cap angular velocity
 
     # Publish the velocity commands
     vel_msg = Twist()

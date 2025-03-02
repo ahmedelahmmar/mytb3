@@ -25,7 +25,7 @@ focal_length = camera_matrix[0, 0]  # Focal length in pixels
 
 
 # IP Camera URL
-ip_camera_url = "http://192.168.1.3:8080/video"
+ip_camera_url = "http://192.168.36.40:8080/video"
 cap = cv2.VideoCapture(ip_camera_url)
 if not cap.isOpened():
     print("Error: Could not open video stream.")
@@ -270,7 +270,7 @@ while not rospy.is_shutdown():
             rospy.loginfo(f"[yolo_detector] Updated global goal coordinates: ({initial_goal_x:.2f}, {initial_goal_y:.2f})")
 
         # Display metrics for the object
-        label_text = f"{label}: Dist {object_distance / 100:.1f}m, Angle {np.degrees(angle):.1f}°"
+        label_text = f"{label}: Dist: {object_distance / 100:.1f}m, Theta: {np.degrees(angle):.1f}°"
         cv2.putText(frame_resized, label_text, (object_center[0], object_center[1] - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 

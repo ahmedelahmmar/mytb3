@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="mytb3_slam" type="trajectory_plot.py" name="trajectory_plot" output="screen"/>  
+  <node pkg="mytb3_slam" type="yolo_detector.py" name="yolo" output="screen"/>
+</launch>
